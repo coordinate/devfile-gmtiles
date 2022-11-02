@@ -1,6 +1,7 @@
 const Prometheus = require('prom-client');
 const express = require('express');
-const http = require('http');
+const https = require('https');
+const fs = require('fs');
 const fetch = require('node-fetch');
 
 const UserAgents = [
@@ -9,6 +10,10 @@ const UserAgents = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
   'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36',
 ];
+
+const privateKey = fs.readFileSync('./cert/chyingp-key.pem');
+const certificate = fs.readFileSync('./cert/chyingp-cert.pem');
+const credentials = { key: privateKey, cert: certificate };
 
 Prometheus.collectDefaultMetrics();
 
@@ -34,7 +39,7 @@ const requestTimer = (req, res, next) => {
 };
 
 const app = express();
-const server = http.createServer(app);
+const server = https.createServer(credentials, app);
 
 // See: http://expressjs.com/en/4x/api.html#app.settings.table
 const PRODUCTION = true; // app.get('env') === 'production';
@@ -67,10 +72,10 @@ app.get('/', async (req, res) => {
   const getFile = (v, x, y, z, s) => {
     let radom = Math.floor(Math.random() * 4);
     let url =
-      //'https://puce-sheep-8374.twil.io/gmtile?v=' +
-      'https://khm' +
-      radom +
-      '.google.com/kh/v=' +
+      'https://puce-sheep-8374.twil.io/gmtile?v=' +
+      // 'https://khm' +
+      // radom +
+      // '.google.com/kh/v=' +
       v +
       '&hl=en&x=' +
       x +
@@ -135,4 +140,3 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`App started on PORT ${PORT}`);
 });
-
