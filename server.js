@@ -58,7 +58,7 @@ const pino = require('pino')({
 });
 app.use(require('pino-http')({ logger: pino }));
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   const p = req.query;
   if (!p.hasOwnProperty('xys')) {
     res.writeHead(500);
