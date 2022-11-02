@@ -61,7 +61,6 @@ app.use(require('pino-http')({ logger: pino }));
 app.get('/', async (req, res) => {
   const p = req.query;
   if (!p.hasOwnProperty('xys')) {
-    res.writeHead(500);
     res.send('500 Server Error');
     return;
   }
@@ -121,7 +120,6 @@ app.get('/', async (req, res) => {
     let result = await Promise.all(promises);
     res.send(JSON.stringify({ result }));
   } catch (error) {
-    res.writeHead(500);
     res.send('500 Server Error');
   }
   // res.send('1111111111!');
