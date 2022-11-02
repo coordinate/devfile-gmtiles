@@ -37,7 +37,7 @@ const app = express();
 const server = http.createServer(app);
 
 // See: http://expressjs.com/en/4x/api.html#app.settings.table
-const PRODUCTION = app.get('env') === 'production';
+const PRODUCTION = true; // app.get('env') === 'production';
 
 // Administrative routes are not timed or logged, but for non-admin routes, pino
 // overhead is included in timing.
@@ -54,20 +54,20 @@ app.use(requestTimer);
 
 // Log routes after here.
 const pino = require('pino')({
-  level: PRODUCTION ? 'info' : 'debug',
+  level: PRODUCTION ? 'warn' : 'debug',
 });
 app.use(require('pino-http')({ logger: pino }));
 
 app.get('/', async (req, res) => {
   const p = req.query;
   if (!p.hasOwnProperty('xys')) {
-    res.send('404 Server Error');
+    res.status(404).send('Not Found');
     return;
   }
   const getFile = (v, x, y, z, s) => {
     let radom = Math.floor(Math.random() * 4);
     let url =
-      // 'https://puce-sheep-8374.twil.io/gmtile?v=' +
+      //'https://puce-sheep-8374.twil.io/gmtile?v=' +
       'https://khm' +
       radom +
       '.google.com/kh/v=' +
@@ -121,7 +121,7 @@ app.get('/', async (req, res) => {
     res.send(JSON.stringify({ result }));
   } catch (error) {
     console.log(error);
-    res.send('500 Server Error');
+    res.status(500).send('Server Error');
   }
   // res.send('1111111111!');
 });
@@ -135,3 +135,4 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`App started on PORT ${PORT}`);
 });
+
