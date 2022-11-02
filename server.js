@@ -61,7 +61,7 @@ app.use(require('pino-http')({ logger: pino }));
 app.get('/', async (req, res) => {
   const p = req.query;
   if (!p.hasOwnProperty('xys')) {
-    res.send('500 Server Error');
+    res.send('404 Server Error');
     return;
   }
   const getFile = (v, x, y, z, s) => {
@@ -120,6 +120,7 @@ app.get('/', async (req, res) => {
     let result = await Promise.all(promises);
     res.send(JSON.stringify({ result }));
   } catch (error) {
+    console.log(error);
     res.send('500 Server Error');
   }
   // res.send('1111111111!');
