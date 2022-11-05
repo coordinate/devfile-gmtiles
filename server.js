@@ -1,4 +1,4 @@
-const Prometheus = require('prom-client');
+// const Prometheus = require('prom-client');
 const express = require('express');
 const http = require('http');
 // const https = require('https');
@@ -16,53 +16,53 @@ const UserAgents = [
 // const certificate = fs.readFileSync('./cert/chyingp-cert.pem');
 // const credentials = { key: privateKey, cert: certificate };
 
-Prometheus.collectDefaultMetrics();
+// Prometheus.collectDefaultMetrics();
 
-const requestHistogram = new Prometheus.Histogram({
-  name: 'http_request_duration_seconds',
-  help: 'Duration of HTTP requests in seconds',
-  labelNames: ['code', 'handler', 'method'],
-  buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5],
-});
+// const requestHistogram = new Prometheus.Histogram({
+//   name: 'http_request_duration_seconds',
+//   help: 'Duration of HTTP requests in seconds',
+//   labelNames: ['code', 'handler', 'method'],
+//   buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5],
+// });
 
-const requestTimer = (req, res, next) => {
-  const path = new URL(req.url, `http://${req.hostname}`).pathname;
-  const stop = requestHistogram.startTimer({
-    method: req.method,
-    handler: path,
-  });
-  res.on('finish', () => {
-    stop({
-      code: res.statusCode,
-    });
-  });
-  next();
-};
+// const requestTimer = (req, res, next) => {
+//   const path = new URL(req.url, `http://${req.hostname}`).pathname;
+//   const stop = requestHistogram.startTimer({
+//     method: req.method,
+//     handler: path,
+//   });
+//   res.on('finish', () => {
+//     stop({
+//       code: res.statusCode,
+//     });
+//   });
+//   next();
+// };
 
 const app = express();
 const server = http.createServer(app);
 
 // See: http://expressjs.com/en/4x/api.html#app.settings.table
-const PRODUCTION = true; // app.get('env') === 'production';
+// const PRODUCTION = true; // app.get('env') === 'production';
 
 // Administrative routes are not timed or logged, but for non-admin routes, pino
 // overhead is included in timing.
-app.get('/ready', (req, res) => res.status(200).json({ status: 'ok' }));
-app.get('/live', (req, res) => res.status(200).json({ status: 'ok' }));
-app.get('/metrics', async (req, res, next) => {
-  const metrics = await Prometheus.register.metrics();
-  res.set('Content-Type', Prometheus.register.contentType);
-  res.end(metrics);
-});
+// app.get('/ready', (req, res) => res.status(200).json({ status: 'ok' }));
+// app.get('/live', (req, res) => res.status(200).json({ status: 'ok' }));
+// app.get('/metrics', async (req, res, next) => {
+//   const metrics = await Prometheus.register.metrics();
+//   res.set('Content-Type', Prometheus.register.contentType);
+//   res.end(metrics);
+// });
 
 // Time routes after here.
-app.use(requestTimer);
+// app.use(requestTimer);
 
 // Log routes after here.
-const pino = require('pino')({
-  level: PRODUCTION ? 'warn' : 'debug',
-});
-app.use(require('pino-http')({ logger: pino }));
+// const pino = require('pino')({
+//   level: PRODUCTION ? 'warn' : 'debug',
+// });
+// app.use(require('pino-http')({ logger: pino }));
 
 app.get('/', async (req, res) => {
   const p = req.query;
