@@ -25,10 +25,10 @@ components:
   - name: outerloop-deploy
     attributes:
       deployment/replicas: 1
-      deployment/cpuLimit: "100m"
-      deployment/cpuRequest: 10m
-      deployment/memoryLimit: 100Mi
-      deployment/memoryRequest: 50Mi
+      deployment/cpuLimit: "500m"
+      deployment/cpuRequest: 20m
+      deployment/memoryLimit: 500Mi
+      deployment/memoryRequest: 20Mi
       deployment/container-port: 3001
     kubernetes:
       uri: outerloop-deploy.yaml
